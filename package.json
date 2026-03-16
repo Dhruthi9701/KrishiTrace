@@ -2,4 +2,9 @@
   "dependencies": {
     "mongodb": "^7.1.0"
   }
+
+
+"scripts": {
+  "start": "node server.js"
+  }
 }
