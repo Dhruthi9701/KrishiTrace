@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const harvestRoutes = require('./routes/harvest');
@@ -14,7 +14,16 @@ const marketRoutes = require('./routes/market');
 
 const app = express();
 
-app.use(cors());
+// CORS - allow Vercel frontend
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://krishi-trace.vercel.app',
+    'https://krishitrace.vercel.app',
+    /\.vercel\.app$/  // Allow all Vercel preview deployments
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
