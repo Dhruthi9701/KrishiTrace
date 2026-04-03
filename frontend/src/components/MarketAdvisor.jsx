@@ -187,9 +187,16 @@ export default function MarketAdvisor({ cropType, quantity, unit, onPricesReady 
         <div className="chat-title">
           <Bot size={16} /> Ask the Market Advisor
           <button
-            onClick={() => setSpeakEnabled(s => !s)}
+            type="button"
+            onClick={() => {
+              const newValue = !speakEnabled;
+              setSpeakEnabled(newValue);
+              if (!newValue) {
+                window.speechSynthesis?.cancel();
+              }
+            }}
             title={speakEnabled ? 'Mute voice responses' : 'Enable voice responses'}
-            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px', borderRadius: '4px' }}
           >
             {speakEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
           </button>

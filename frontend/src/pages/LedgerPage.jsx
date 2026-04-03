@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import api from '../api';
-import { BookOpen, CheckCircle, AlertTriangle, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function LedgerPage() {
   const { t } = useTranslation();
@@ -33,41 +33,30 @@ export default function LedgerPage() {
         <div className="empty-state">{t('common.noData')}</div>
       ) : (
         <>
-          <div className="table-wrapper">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>{t('ledger.crop')}</th>
-                  <th>{t('ledger.quantity')}</th>
-                  <th>{t('ledger.payout')}</th>
-                  <th>Final Price</th>
-                  <th>{t('ledger.txHash')}</th>
-                  <th>{t('ledger.block')}</th>
-                  <th>{t('ledger.status')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.records.map((r) => (
-                  <tr key={r._id}>
-                    <td><strong>{r.cropType}</strong><br /><small>{r.farmerName}</small></td>
-                    <td>{r.quantity} {r.unit}</td>
-                    <td>₹{r.payoutBreakdown?.farmerPayout}/kg</td>
-                    <td>₹{r.payoutBreakdown?.finalConsumerPrice}/kg</td>
-                    <td className="hash-cell">
-                      <span title={r.txHash}>{r.txHash?.slice(0, 14)}...</span>
-                      <ExternalLink size={12} />
-                    </td>
-                    <td>{r.blockNumber?.toLocaleString()}</td>
-                    <td>
-                      <span className={`badge ${r.fairPriceCompliant ? 'badge-green' : 'badge-red'}`}>
-                        {r.fairPriceCompliant ? <CheckCircle size={12} /> : <AlertTriangle size={12} />}
-                        {r.fairPriceCompliant ? t('ledger.compliant') : t('ledger.violation')}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="chain-list">
+            {data.records.map((record, index) => (
+              <div key={record._id}>
+                <div className={`chain-block ${record.fairPriceCompliant ? 'compliant' : 'violation'}`}>
+                  <div className="chain-header">
+                    <div>
+                      <strong style={{ color: '#1e293b' }}>{record.cropType}</strong>
+                      <span style={{ color: '#64748b', marginLeft: 8 }}>{record.farmerName}</span>
+                    </div>
+                    <span className={`badge ${record.fairPriceCompliant ? 'badge-compliant' : 'badge-violation'}`}>
+                      {record.fairPriceCompliant ? 'Compliant' : 'Violation'}
+                    </span>
+                  </div>
+                  <div style={{ color: '#475569', fontSize: '0.875rem' }}>
+                    {record.quantity} {record.unit}
+                  </div>
+                  <div className="chain-meta">
+                    <span className="chain-hash">TX: {record.txHash}</span>
+                    <span className="chain-block-num">Block #{record.blockNumber}</span>
+                  </div>
+                </div>
+                {index < data.records.length - 1 && <div className="chain-connector" />}
+              </div>
+            ))}
           </div>
           <div className="pagination">
             <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}><ChevronLeft size={16} /></button>
